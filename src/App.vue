@@ -3,8 +3,12 @@ import AppHeader from '@/components/AppHeader.vue'
 import Drawer from '@/components/Drawer.vue'
 import type { Card } from '@/types/card.types'
 import { computed, provide, ref, watch } from 'vue'
+import { CardKey, CartKey } from '@/types/symbols'
+import axios, { type AxiosResponse } from 'axios'
+import type { FavoriteResponse } from '@/types/favorites.types'
 
 const cart = ref<Card[]>([])
+const items = ref<Card[]>([])
 const drawerOpen = ref<boolean>(false)
 
 const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
@@ -36,12 +40,46 @@ watch(
   { deep: true }
 )
 
-provide('cart', {
+const onClickAddToCartButton = (item: Card) => {
+  if (!item.isAdded) {
+    addToCart(item)
+  } else {
+    removeFromCart(item)
+  }
+}
+
+const addToFavorite = async (item: Card) => {
+  try {
+    if (!item.isFavorite) {
+      const favoriteDtoRequest = {
+        item_id: item.id
+      }
+      item.isFavorite = !item.isFavorite
+
+      const { data }: AxiosResponse<FavoriteResponse> = await axios.post(
+        'https://676e203f06f3a27b.mokky.dev/favorites',
+        favoriteDtoRequest
+      )
+      item.favoriteId = data.id
+    } else {
+      item.isFavorite = false
+      await axios.delete(`https://676e203f06f3a27b.mokky.dev/favorites/${item.favoriteId}`)
+      item.favoriteId = null
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+provide(CartKey, {
   cart,
   removeFromCart,
   addToCart,
-  onCloseDrawer,
-  onOpenDrawer
+  onClickAddToCartButton
+})
+provide(CardKey, {
+  items,
+  addToFavorite
 })
 </script>
 

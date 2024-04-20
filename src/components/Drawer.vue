@@ -2,7 +2,9 @@
 import CartItemList from '@/components/CartItemList.vue'
 import InfoBlock from '@/components/InfoBlock.vue'
 import axios from 'axios'
-import { computed, inject, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
+import { CartKey } from '@/types/symbols'
+import { injectStrict } from '@/utils/injectStrict'
 
 const emit = defineEmits<{ (event: 'onCloseDrawer'): void }>()
 const { totalPrice } = defineProps<{
@@ -10,7 +12,7 @@ const { totalPrice } = defineProps<{
   vatPrice: number
 }>()
 
-const { cart } = inject('cart')
+const { cart } = injectStrict(CartKey)
 const isCreatingOrder = ref<boolean>(false)
 const orderId = ref<number | null>(null)
 

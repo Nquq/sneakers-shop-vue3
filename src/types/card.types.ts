@@ -1,3 +1,5 @@
+import type { Ref } from 'vue'
+
 export interface CardProps {
   imageUrl: string
   title: string
@@ -20,4 +22,9 @@ export interface CardListFunctions {
 export interface CardFunctions {
   (event: 'onClickFavorite'): void
   (event: 'onClickAddButton'): void
+}
+
+export interface CardProvide {
+  items: Ref<Card[]>
+  addToFavorite: (item: Card) => Promise<void>
 }

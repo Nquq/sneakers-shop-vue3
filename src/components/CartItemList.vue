@@ -1,5 +1,5 @@
 <template>
-  <div v-auto-animate class="flex flex-col gap-4 flex-1">
+  <div v-auto-animate class="flex flex-col gap-4 flex-1 overflow-y-auto">
     <CartItem
       v-for="cartItem in cart"
       :key="cartItem.id"
@@ -14,7 +14,8 @@
 
 <script setup lang="ts">
 import CartItem from '@/components/CartItem.vue'
-import { inject } from 'vue'
+import { CartKey } from '@/types/symbols'
+import { injectStrict } from '@/utils/injectStrict'
 
-const { cart, removeFromCart } = inject('cart')
+const { cart, removeFromCart } = injectStrict(CartKey)
 </script>
